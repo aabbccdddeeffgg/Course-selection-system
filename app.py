@@ -8,7 +8,7 @@ app.secret_key = "123456"  # 用于管理 session
 # 数据库配置
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Xh23666666'
+app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'xk_system'
 
 mysql = MySQL(app)
