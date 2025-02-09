@@ -1,0 +1,140 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: beige; /* 背景改为纯白色 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #333; /* 文字颜色调整为深灰色 */
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.login-card {
+    background: #ffffff; /* 卡片背景改为纯白色 */
+    border: 1px solid #ddd; /* 添加浅灰色边框 */
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+    width: 350px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.login-card:hover {
+    transform: scale(1.02);
+}
+
+.login-header {
+    margin-bottom: 2rem;
+}
+
+.login-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333; /* 标题颜色调整为深灰色 */
+}
+
+.login-header p {
+    font-size: 0.9rem;
+    color: #666; /* 副标题颜色调整为浅灰色 */
+    opacity: 0.8;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666; /* 标签颜色调整为浅灰色 */
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd; /* 输入框边框改为浅灰色 */
+    border-radius: 8px;
+    background: #f9f9f9; /* 输入框背景改为浅灰色 */
+    color: #333; /* 输入框文字颜色调整为深灰色 */
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007bff; /* 输入框聚焦时的边框颜色 */
+    background: #fff; /* 输入框聚焦时的背景颜色 */
+}
+
+.login-form button {
+    width: 100%;
+    padding: 0.75rem;
+    background: #007bff; /* 按钮背景改为蓝色 */
+    color: #ffffff; /* 按钮文字颜色改为白色 */
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+    background: #0056b3; /* 按钮悬停时的背景颜色 */
+}
+
+.modal {
+        display: none; /* 默认隐藏 */
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10px auto; /* 调整为顶部 */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%; /* 适中宽度 */
+        max-width: 600px; /* 最大宽度 */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        border-radius: 8px;
+    }
+
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }

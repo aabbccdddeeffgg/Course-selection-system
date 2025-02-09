@@ -1,0 +1,73 @@
+{% extends "student/base.html" %}
+
+{% block title %}课表查看{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/teacher/profile.css') }}">
+
+<div class="el-card">
+    <h2>课表查看</h2>
+    <div class="search-container">
+        <form method="GET" action="{{ url_for('student_timetable') }}">
+            <input type="text" name="semester" placeholder="学期" value="{{ semester }}">
+            <button type="submit">搜索</button>
+        </form>
+    </div>
+    <table class="timetable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>上课时间</th>
+                <th>星期一</th>
+                <th>星期二</th>
+                <th>星期三</th>
+                <th>星期四</th>
+                <th>星期五</th>
+                <th>星期六</th>
+                <th>星期天</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for period in range(1, 13) %}
+            <tr>
+                <td>{{ period }}</td>
+                <td>
+                    {% if period == 1 %}
+                        08:00-08:45
+                    {% elif period == 2 %}
+                        08:55-09:40
+                    {% elif period == 3 %}
+                        10:00-10:45
+                    {% elif period == 4 %}
+                        10:55-11:40
+                    {% elif period == 5 %}
+                        13:00-13:45
+                    {% elif period == 6 %}
+                        13:55-14:40
+                    {% elif period == 7 %}
+                        15:00-15:45
+                    {% elif period == 8 %}
+                        15:55-16:40
+                    {% elif period == 9 %}
+                        18:00-18:45
+                    {% elif period == 10 %}
+                        18:55-19:40
+                    {% elif period == 11 %}
+                        20:00-20:45
+                    {% elif period == 12 %}
+                        20:55-21:40
+                    {% else %}
+                        第{{ period }}节
+                    {% endif %}
+                </td>
+                {% for day in range(0, 7) %}
+                <td>
+                    {{ timetable[period-1][day] }}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

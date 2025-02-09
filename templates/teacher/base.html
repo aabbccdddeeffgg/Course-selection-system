@@ -1,0 +1,23 @@
+<!-- templates/student/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <h3>欢迎您，{{ session.get('name', '教师端') }}</h3> <!-- 动态显示老师姓名 -->
+        <ul>
+            <li><a href="{{ url_for('teacher_courses') }}">所授课程</a></li>
+            <li><a href="{{ url_for('teacher_profile') }}">个人信息</a></li>
+            <li><a href="{{ url_for('teacher_change_password') }}">修改密码</a></li>
+            <li><a href="{{ url_for('logout') }}">退出登录</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

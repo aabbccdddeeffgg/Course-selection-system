@@ -1,0 +1,53 @@
+/* static/css/sidebar.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #f4f4f9; /* 背景颜色调整为浅灰色 */
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #343a40; /* 深灰色背景 */
+    color: #ffffff; /* 白色文字 */
+    padding: 20px;
+    height: 100vh;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem; /* 增加标题字体大小 */
+    font-weight: 600; /* 加粗标题 */
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    color: #ffffff; /* 白色文字 */
+    text-decoration: none;
+    display: block;
+    padding: 15px 20px; /* 增加内边距 */
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    font-size: 1rem; /* 增加链接字体大小 */
+}
+
+.sidebar ul li a:hover {
+    background-color: #495057; /* 悬停时的背景颜色 */
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #ffffff; /* 内容区域背景为白色 */
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+}

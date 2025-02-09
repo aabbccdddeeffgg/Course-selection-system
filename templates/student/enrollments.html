@@ -1,0 +1,151 @@
+<!-- templates/student/grade_submit.html -->
+{% extends "student/base.html" %}
+
+{% block title %}选课信息{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student/enrollments.css') }}">
+
+<div class="el-card">
+    <div class="search-container">
+        <form method="GET" action="{{ url_for('student_enrollments') }}">
+            <input type="text" name="semester" placeholder="学期" value="{{ semester }}">
+            <input type="text" name="course_id" placeholder="课程号" value="{{ course_id }}">
+            <input type="text" name="course_name" placeholder="课程名" value="{{ course_name }}">
+            <input type="text" name="teacher_id" placeholder="教师号" value="{{ teacher_id }}">
+            <input type="text" name="teacher_name" placeholder="教师名" value="{{ teacher_name }}">
+            <input type="text" name="credit" placeholder="学分" value="{{ credit }}">
+            <input type="text" name="class_time" placeholder="上课时间" value="{{ class_time }}">
+            <button type="submit">搜索</button>
+        </form>
+    </div>
+
+    <!-- 添加已选总学分字段 -->
+    <div style="margin: 15px;">
+        <strong>已选总学分：</strong>{{ total_credits }}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>学期</th>
+                <th>课程号</th>
+                <th>课程名</th>
+                <th>教师号</th>
+                <th>教师名</th>
+                <th>学分</th>
+                <th>上课时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course[0] }}</td> <!-- 学期 -->
+                <td>{{ course[1] }}</td> <!-- 课程号 -->
+                <td>{{ course[2] }}</td> <!-- 课程名 -->
+                <td>{{ course[3] }}</td> <!-- 教师号 -->
+                <td>{{ course[4] }}</td> <!-- 教师名 -->
+                <td>{{ course[5] }}</td> <!-- 学分 -->
+                <td>{{ course[6] }}</td> <!-- 上课时间 -->
+                <td>
+                    <form method="POST" action="{{ url_for('student_enrollments') }}" class="drop-form">
+                        <input type="hidden" name="course_id" value="{{ course[1] }}">
+                        <button type="submit">退课</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 分页导航 -->
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('student_enrollments', page=page-1, semester=semester, course_id=course_id, course_name=course_name, teacher_id=teacher_id, teacher_name=teacher_name, credit=credit, class_time=class_time) }}">上一页</a>
+        {% endif %}
+        {% for p in range(1, total_pages + 1) %}
+            <a href="{{ url_for('student_enrollments', page=p, semester=semester, course_id=course_id, course_name=course_name, teacher_id=teacher_id, teacher_name=teacher_name, credit=credit, class_time=class_time) }}" class="{{ 'active' if p == page else '' }}">{{ p }}</a>
+        {% endfor %}
+        {% if page < total_pages %}
+            <a href="{{ url_for('student_enrollments', page=page+1, semester=semester, course_id=course_id, course_name=course_name, teacher_id=teacher_id, teacher_name=teacher_name, credit=credit, class_time=class_time) }}">下一页</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 模态框结构 -->
+<div id="messageModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <p id="modalMessage"></p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有的退课表单
+    const forms = document.querySelectorAll('.drop-form');
+
+    forms.forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // 阻止表单的默认提交行为
+
+            const formData = new FormData(form);
+            const course_id = formData.get('course_id');
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                showModal(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showModal("退课失败，请重试！");
+            });
+        });
+    });
+
+    // 显示模态框的函数
+    function showModal(message) {
+        var modal = document.getElementById('messageModal');
+        var modalMessage = document.getElementById('modalMessage');
+        var closeButton = document.getElementsByClassName('close-button')[0];
+
+        // 设置消息内容
+        modalMessage.textContent = message;
+
+        // 显示弹窗
+        modal.style.display = 'block';
+
+        // 关闭按钮功能
+        closeButton.onclick = function() {
+            modal.style.display = 'none';
+            // 刷新页面
+            location.reload();
+        }
+
+        // 点击弹窗外区域关闭弹窗
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+                // 刷新页面
+                location.reload();
+            }
+        }
+    }
+
+    // 检查是否有消息需要显示
+    const message = "{{ message if message else '' }}";
+    if (message) {
+        showModal(message);
+    }
+});
+</script>
+
+{% endblock %}

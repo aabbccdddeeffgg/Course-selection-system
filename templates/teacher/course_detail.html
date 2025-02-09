@@ -1,0 +1,130 @@
+<!-- templates/teacher/course_detail.html -->
+{% extends "teacher/base.html" %}
+
+{% block title %}课程详情{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/teacher/course.css') }}">
+
+<div class="el-card">
+    <!-- 课程基本信息表格 -->
+    <table>
+        <thead>
+            <tr>
+                <th>学期</th>
+                <th>课程号</th>
+                <th>课程名</th>
+                <th>学分</th>
+                <th>上课时间</th>
+<!--                <th></th>-->
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ course[0] }}</td> {# 学期 #}
+                <td>{{ course[1] }}</td> {# 课程号 #}
+                <td>{{ course[2] }}</td> {# 课程名 #}
+                <td>{{ course[5] }}</td> {# 学分 #}
+                <td>{{ course[6] }}</td> {# 上课时间 #}
+<!--                <td> <a href="{{ url_for('teacher_courses') }}">返回课程页面</a> </td>-->
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 饼图展示区域 -->
+ <div class="charts-container">
+    <!-- 学院分布饼图 -->
+    <div class="chart-item">
+        <!-- 新增固定尺寸的 canvas 容器 -->
+        <div class="canvas-wrapper">
+            <canvas id="deptChart"></canvas>
+        </div>
+        <!-- 图例和标题存放在表格中 -->
+        <table class="chart-labels">
+            <tr>
+                <td colspan="4" class="chart-title">选课学生学院分布</td>
+            </tr>
+            <!-- 如有图例内容，可在此处添加 -->
+        </table>
+    </div>
+
+    <!-- 成绩分布饼图 -->
+    <div class="chart-item">
+        <!-- 新增固定尺寸的 canvas 容器 -->
+        <div class="canvas-wrapper">
+            <canvas id="gradeChart"></canvas>
+        </div>
+        <!-- 图例和标题存放在表格中 -->
+        <table class="chart-labels">
+            <tr>
+                <td colspan="4" class="chart-title">学生成绩分布</td>
+            </tr>
+            <tr>
+                <td>不及格：&lt;60</td>
+                <td>中：60-70</td>
+                <td>良：71-85</td>
+                <td>优：86-100</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+
+<!-- 引入 Chart.js（使用 CDN） -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// 将后端传递的数据转换为 JavaScript 变量
+const deptLabels = {{ dept_labels|tojson }};
+const deptCounts = {{ dept_counts|tojson }};
+
+const gradeLabels = {{ grade_labels|tojson }};
+const gradeCounts = {{ grade_counts|tojson }};
+
+// 绘制学院分布饼图
+const ctxDept = document.getElementById('deptChart').getContext('2d');
+const deptChart = new Chart(ctxDept, {
+    type: 'pie',
+    data: {
+        labels: deptLabels,
+        datasets: [{
+            data: deptCounts,
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#66BB6A', '#BA68C8', '#FFA726'],
+             hoverOffset: 10,
+             radius: 110
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// 绘制成绩分布饼图
+const ctxGrade = document.getElementById('gradeChart').getContext('2d');
+const gradeChart = new Chart(ctxGrade, {
+    type: 'pie',
+    data: {
+        labels: gradeLabels,
+        datasets: [{
+            data: gradeCounts,
+            backgroundColor: ['#D32F2F', '#FFA000', '#388E3C', '#1976D2'],
+             hoverOffset: 10,
+            radius: 110
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

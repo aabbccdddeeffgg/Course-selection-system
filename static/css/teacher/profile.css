@@ -1,0 +1,185 @@
+/* static/css/profile.css */
+.el-card {
+    background-color: #ffffff;
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 1190px;
+}
+
+.student-info {
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.student-info p {
+    margin: 0;
+    font-size: 16px;
+    flex: 1;
+}
+
+.search-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.search-container input {
+    width: 200px;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+}
+
+.search-container button {
+    padding: 10px 20px;
+    background-color: #409EFF;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-container button:hover {
+    background-color: #66b1ff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ebeef5;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f5f7fa;
+}
+
+tr:nth-child(even) {
+    background-color: #f9fafc;
+}
+
+tr:hover {
+    background-color: #ecf5ff;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+}
+
+.pagination a:hover {
+    background-color: #ecf5ff;
+}
+
+.pagination .active {
+    background-color: #409EFF;
+    color: #ffffff;
+    border-color: #409EFF;
+}
+
+.average-grade {
+    margin-top: 20px;
+    font-size: 14px; /* 字体大小稍小 */
+    font-weight: normal; /* 不加粗 */
+}
+
+
+.personal-container, .timetable-container {
+    margin-bottom: 20px;
+}
+
+.personal-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+     border: 1px solid #b3d9ff;
+    padding-top: 5px;
+    padding-left: 40px;
+    padding-right: 15px;
+    border-radius: 14px;
+     background-color: rgba(179, 217, 255, 0.66);
+
+}
+
+.info-left p {
+    margin: 25px 0;
+    font-size: 20px;
+}
+
+
+.info-right {
+    width: 200px;
+    text-align: center;
+}
+
+.profile-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ccc;
+}
+
+.search-container {
+    text-align: right;
+    /*justify-content: center;*/
+    align-items: center;     /* 垂直居中对齐 */
+}
+
+.search-container h2 {
+    margin-top: 10px; /* 去掉默认的外边距 */
+}
+
+.search-container form {
+    margin-left: 40px; /* 为搜索框添加左边距 */
+}
+
+.search-container input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-container button {
+    padding: 8px 16px;
+    background-color: #409EFF;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.timetable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.timetable th, .timetable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.timetable th {
+  background-color: #f5f7fa
+}

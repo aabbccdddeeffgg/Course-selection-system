@@ -1,0 +1,104 @@
+{% extends "teacher/base.html" %}
+
+{% block title %}教师个人信息{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/teacher/profile.css') }}">
+
+<!-- 个人信息部分 -->
+<div class="el-card">
+    <h2>个人信息</h2>
+    <div class="personal-info">
+        <!-- 左侧教师信息 -->
+        <div class="info-left">
+            <p><strong>教师姓名：</strong> {{ teacher_info[1] }}</p>
+            <p><strong>教师号：</strong> {{ teacher_info[0] }}</p>
+        </div>
+        <div class="info-left" >
+            <p><strong>职称：</strong> {{ teacher_info[2] }}</p>
+            <p><strong>学院名：</strong> {{ teacher_info[3] }}</p>
+        </div>
+        <!-- 右侧个人照片区域 -->
+        <div class="info-right">
+            <!-- 你可以替换 src 为实际照片路径 -->
+            <img src="{{ url_for('static', filename='images/teacher_default.png') }}" alt="个人照片" class="profile-photo">
+        </div>
+    </div>
+
+<!-- 学期课表部分 -->
+<div class="timetable-container">
+    <!-- 搜索栏：只搜索学期 -->
+    <div class="search-container">
+        <div>
+        <h2>学期课表</h2>
+        </div>
+        <form method="GET" action="{{ url_for('teacher_profile') }}">
+            <input type="text" name="semester" placeholder="学期" value="{{ semester }}">
+            <button type="submit">搜索</button>
+        </form>
+    </div>
+    <!-- 课表表格：9列（#、上课时间、星期一～星期天），13行（标题行 + 12节课） -->
+    <table class="timetable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>上课时间</th>
+                <th>星期一</th>
+                <th>星期二</th>
+                <th>星期三</th>
+                <th>星期四</th>
+                <th>星期五</th>
+                <th>星期六</th>
+                <th>星期天</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for period in range(1, 13) %}
+            <tr>
+                <!-- 第一列：节次编号 -->
+                <td>{{ period }}</td>
+                <!-- 第二列：上课时间，可以自行定义具体时间 -->
+                <td>
+                    {% if period == 1 %}
+                        08:00-08:45
+                    {% elif period == 2 %}
+                        08:55-09:40
+                    {% elif period == 3 %}
+                        10:00-10:45
+                    {% elif period == 4 %}
+                        10:55-11:40
+                    {% elif period == 5 %}
+                        13:00-13:45
+                    {% elif period == 6 %}
+                        13:55-14:40
+                    {% elif period == 7 %}
+                        15:00-15:45
+                    {% elif period == 8 %}
+                        15:55-16:40
+                    {% elif period == 9 %}
+                        18:00-18:45
+                    {% elif period == 10 %}
+                        18:55-19:40
+                    {% elif period == 11 %}
+                        20:00-20:45
+                    {% elif period == 12 %}
+                        20:55-21:40
+                    {% else %}
+                        第{{ period }}节
+                    {% endif %}
+                </td>
+                <!-- 星期一到星期天，对应 timetable 数组每行7列数据 -->
+                {% for day in range(0, 7) %}
+                <td>
+                    {% if timetable[period-1][day] %}
+                        {{ timetable[period-1][day] }}
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}

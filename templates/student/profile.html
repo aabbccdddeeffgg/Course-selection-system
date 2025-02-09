@@ -1,0 +1,79 @@
+<!-- templates/student/profile.html -->
+{% extends "student/base.html" %}
+
+{% block title %}个人信息{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/student/profile.css') }}">
+
+<div class="el-card">
+    <!-- 显示学生个人信息 -->
+    <div class="student-info">
+        <h2>个人信息</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 100px; margin-bottom: 8px">
+            <p>姓名: {{ student_info[0] }}</p>
+            <p>学号: {{ student_info[1] }}</p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 100px; margin-bottom: 8px">
+            <p>性别: {{ student_info[2] }}</p>
+            <p>年龄: {{ student_info[3] }}</p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 100px; margin-bottom: 8px">
+            <p>所属院系: {{ student_info[4] }}</p>
+        </div>
+    </div>
+
+    <!-- 成绩搜索框 -->
+    <div class="search-container">
+        <form method="GET" action="{{ url_for('student_profile') }}">
+            <input type="text" name="semester" placeholder="学期" value="{{ semester }}">
+            <button type="submit">搜索</button>
+        </form>
+    </div>
+
+    <!-- 成绩表格 -->
+    <h2>已修课程</h2>
+    <!-- 平均成绩 -->
+    <div class="average-grade">
+        <p><strong>总学分: </strong>{{ overall_credicts if overall_credicts is not none else '暂无已修课程' }}</p>
+        <p><strong>加权平均成绩: </strong>{{ average_grade if average_grade is not none else '暂无成绩' }}</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>学期</th>
+                <th>课程号</th>
+                <th>课程名</th>
+                <th>学分</th>
+                <th>成绩</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for grade in grades %}
+            {% if grade[3] %} <!-- 只有当成绩不为空时才显示 -->
+            <tr>
+                <td>{{ grade[0] }}</td> <!-- 学期 -->
+                <td>{{ grade[1] }}</td> <!-- 课程号 -->
+                <td>{{ grade[2] }}</td> <!-- 课程名 -->
+                <td>{{ grade[4] }}</td> <!-- 学分 -->
+                <td>{{ grade[3] }}</td> <!-- 成绩 -->
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 分页导航 -->
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('student_profile', page=page-1, semester=semester) }}">上一页</a>
+        {% endif %}
+        {% for p in range(1, total_pages + 1) %}
+            <a href="{{ url_for('student_profile', page=p, semester=semester) }}" class="{{ 'active' if p == page else '' }}">{{ p }}</a>
+        {% endfor %}
+        {% if page < total_pages %}
+            <a href="{{ url_for('student_profile', page=page+1, semester=semester) }}">下一页</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

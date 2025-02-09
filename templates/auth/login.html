@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选课系统登录</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>欢迎登录选课系统</h1>
+                <p>请输入您的用户名和密码</p>
+            </div>
+            <form class="login-form" method="POST" action="/login">
+                <div class="form-group">
+                    <label for="ID">用户名</label>
+                    <input type="text" id="ID" name="ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">登录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div id="messageModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-button">&times;</span>
+                        <p id="modalMessage"></p>
+                     </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var messages = {{ get_flashed_messages(with_categories=true) | tojson | safe }};
+    if (messages.length > 0) {
+        var modal = document.getElementById('messageModal');
+        var modalMessage = document.getElementById('modalMessage');
+        var closeButton = document.getElementsByClassName('close-button')[0];
+
+        // 设置消息内容
+        messages.forEach(function(msg) {
+            var messageElement = document.createElement('p');
+            messageElement.textContent = msg[1]; // msg[1] 是消息内容
+            modalMessage.appendChild(messageElement);
+        });
+
+        // 显示弹窗
+        modal.style.display = 'block';
+
+        // 关闭按钮功能
+        closeButton.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        // 点击弹窗外区域关闭弹窗
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    }
+});
+</script>
+</html>

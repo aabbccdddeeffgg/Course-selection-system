@@ -1,0 +1,88 @@
+{% extends "teacher/base.html" %}
+
+{% block title %}学生成绩提交{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/teacher/grade_submit.css') }}">
+
+<div class="el-card">
+    <!-- 搜索栏（与教师课程页面一致） -->
+    <div class="search-container">
+        <form method="GET" action="{{ url_for('grade_submit') }}">
+            <!-- 保留 course_id 与 teacher_id 参数 -->
+            <input type="hidden" name="course_id" value="{{ course_id }}">
+            <input type="hidden" name="teacher_id" value="{{ teacher_id }}">
+            <input type="text" name="student_id" placeholder="学号" value="{{ search_student_id }}">
+            <input type="text" name="student_name" placeholder="姓名" value="{{ search_student_name }}">
+            <button type="submit">搜索</button>
+        </form>
+        <!-- 右侧显示课程信息 -->
+        <div class="course-info">
+            <strong>课程号：{{ course_id }}</strong>&nbsp;&nbsp;
+            <strong>课程名：{{ course_name }}</strong>
+        </div>
+        <!-- 方便一点的返回按钮 -->
+        <div>
+            <a href="{{ url_for('teacher_courses') }}">返回课程页面</a>
+        </div>
+    </div>
+
+    <!-- 成绩提交表单 -->
+    <form method="POST" action="{{ url_for('grade_submit', course_id=course_id, teacher_id=teacher_id, page=page) }}">
+        <table>
+            <thead>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>学院</th>
+                    <th>期末成绩</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student[0] }}</td>
+                    <td>{{ student[1] }}</td>
+                    <td>{{ student[2] }}</td>
+                    <td>{{ student[3] }}</td>
+                    <td>
+                        <!-- 输入成绩的框，名称为 grade_学号 -->
+                        <input type="text" name="grade_{{ student[0] }}" value="{{ student[4] if student[4] is not none else '' }}" placeholder="输入成绩">
+                        <!-- 隐藏字段，记录该学生学号 -->
+                        <input type="hidden" name="student_ids" value="{{ student[0] }}">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button class="submit_button" onclick="return confirm('确定要提交成绩吗？');">提交成绩</button>
+    </form>
+
+    <!-- 分页导航 -->
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('grade_submit', page=page-1, course_id=course_id, teacher_id=teacher_id, student_id=search_student_id, student_name=search_student_name) }}">上一页</a>
+        {% endif %}
+        {% for p in range(1, total_pages + 1) %}
+            <a href="{{ url_for('grade_submit', page=p, course_id=course_id, teacher_id=teacher_id, student_id=search_student_id, student_name=search_student_name) }}" class="{{ 'active' if p == page else '' }}">{{ p }}</a>
+        {% endfor %}
+        {% if page < total_pages %}
+            <a href="{{ url_for('grade_submit', page=page+1, course_id=course_id, teacher_id=teacher_id, student_id=search_student_id, student_name=search_student_name) }}">下一页</a>
+        {% endif %}
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        {% for category, message in messages %}
+          alert("{{ message }}");
+        {% endfor %}
+      });
+    </script>
+  {% endif %}
+{% endwith %}
+
+{% endblock %}

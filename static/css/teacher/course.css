@@ -1,0 +1,178 @@
+/* static/css/course.css */
+.el-card {
+    background-color: #ffffff;
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 1190px;
+}
+
+.search-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px; /* 增加搜索框之间的间隔 */
+    margin-bottom: 20px;
+}
+
+.search-container input {
+    width: 26%; /* 三个搜索框每行一个 */
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+}
+
+.search-container button {
+    padding: 10px 20px;
+    background-color: #409EFF;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-container button:hover {
+    background-color: #66b1ff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ebeef5;
+    padding: 12px;
+    text-align: left;
+}
+
+
+th {
+    background-color: #f5f7fa;
+}
+
+.centered {
+    text-align: center; /* 文字居中 */
+}
+
+tr:nth-child(even) {
+    background-color: #f9fafc;
+}
+
+tr:hover {
+    background-color: #ecf5ff;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+}
+
+.pagination a:hover {
+    background-color: #ecf5ff;
+}
+
+.pagination .active {
+    background-color: #409EFF;
+    color: #ffffff;
+    border-color: #409EFF;
+}
+
+/* 模态框样式 */
+.modal {
+    display: none; /* 默认隐藏 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 13%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10px auto; /* 调整为靠近顶部 */
+    padding: 10px;
+    border: 1px solid #888;
+    width: 60%; /* 适中宽度 */
+    max-height: 50px; /* 最大宽度 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    text-align: center; /* 内容居中 */
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+/* 容器采用 Flex 布局，两图之间均匀分布 */
+.charts-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+}
+
+/* 每个图块居中显示 */
+.chart-item {
+    text-align: center;
+}
+
+/* 固定 canvas 容器尺寸，保证 canvas 大小固定 */
+.canvas-wrapper {
+    width: 300px;
+    height: 300px;
+    margin: 0 auto; /* 居中显示 */
+}
+
+/* canvas 自适应容器 */
+.canvas-wrapper canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* 图例表格与饼图同宽 */
+.chart-labels {
+    width: 300px;  /* 与 canvas 容器宽度一致 */
+    margin: 10px auto 0 auto;
+    border-collapse: collapse;
+}
+
+/* 表格内所有单元格居中显示 */
+.chart-labels td {
+    text-align: center;
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+
+/* 标题单元格样式，居中且加粗 */
+.chart-title {
+    font-weight: bold;
+    text-align: center;
+    background-color: #f2f2f2;
+}

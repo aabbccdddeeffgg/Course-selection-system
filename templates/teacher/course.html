@@ -1,0 +1,75 @@
+<!-- templates/teacher/course.html -->
+{% extends "teacher/base.html" %}
+
+{% block title %}我的课程信息{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher/course.css') }}">
+
+<div class="el-card">
+    <!-- 搜索栏：去除教师号和教师名 -->
+    <div class="search-container">
+        <form method="GET" action="{{ url_for('teacher_courses') }}">
+            <input type="text" name="semester" placeholder="学期" value="{{ semester }}">
+            <input type="text" name="course_id" placeholder="课程号" value="{{ course_id }}">
+            <input type="text" name="course_name" placeholder="课程名" value="{{ course_name }}">
+            <input type="text" name="credit" placeholder="学分" value="{{ credit }}">
+            <input type="text" name="class_time" placeholder="上课时间" value="{{ class_time }}">
+            <button type="submit">搜索</button>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>学期</th>
+                <th>课程号</th>
+                <th>课程名</th>
+                <th>学分</th>
+                <th>上课时间</th>
+                <th colspan="2" class="centered">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course[0] }}</td> {# 学期 #}
+                <td>{{ course[1] }}</td> <!-- 课程号 -->
+                <td>{{ course[2] }}</td> {# 课程名 #}
+                <td>{{ course[5] }}</td> {# 学分 #}
+                <td>{{ course[6] }}</td> {# 上课时间 #}
+                <!-- 查看本课程学生详情 -->
+                <td class="centered">
+                    <a href="{{ url_for('course_detail', course_id=course[1], teacher_id=course[3]) }}" >查看课程详情</a>
+                </td>
+                <td class="centered">
+                    <a href="{{ url_for('grade_submit', course_id=course[1], teacher_id=course[3]) }}" >学生成绩提交</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 分页导航 -->
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('teacher_courses', page=page-1, semester=semester, course_name=course_name, credit=credit, class_time=class_time) }}">上一页</a>
+        {% endif %}
+        {% for p in range(1, total_pages + 1) %}
+            <a href="{{ url_for('teacher_courses', page=p, semester=semester, course_name=course_name, credit=credit, class_time=class_time) }}" class="{{ 'active' if p == page else '' }}">{{ p }}</a>
+        {% endfor %}
+        {% if page < total_pages %}
+            <a href="{{ url_for('teacher_courses', page=page+1, semester=semester, course_name=course_name, credit=credit, class_time=class_time) }}">下一页</a>
+        {% endif %}
+    </div>
+</div>
+
+<!--{# -->
+<!--    注意：在后端查询数据库时，请确保查询语句中加入教师身份的过滤条件，-->
+<!--    例如在SQL语句中添加 "WHERE teacher_id = 当前教师的ID"（例如通过 session 获取），-->
+<!--    这样才能确保教师端页面只显示该教师所开的课程。-->
+<!--#}-->
+
+{% endblock %}
+
