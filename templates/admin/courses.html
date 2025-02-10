@@ -1,0 +1,125 @@
+{% extends "admin/base.html" %}
+{% block title %}课程管理{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/courses.css') }}">
+<div class="el-card">
+    <h2>课程管理</h2>
+
+    <!-- 增加课程表单 -->
+    <form id="addCourseForm" class="add-form">
+        <label for="course_id">课程号</label>
+        <input type="text" id="course_id" name="course_id" placeholder="课程号" required>
+        <label for="course_name">课程名称</label>
+        <input type="text" id="course_name" name="course_name" placeholder="课程名称" required>
+        <label for="semester">学期</label>
+        <input type="text" id="semester" name="semester" placeholder="学期" required>
+        <label for="credit">学分</label>
+        <input type="number" id="credit" name="credit" placeholder="学分" required>
+        <button type="submit">增加课程</button>
+    </form>
+
+    <!-- 课程列表 -->
+    <table class="course-table">
+        <thead>
+            <tr>
+                <th>课程号</th>
+                <th>课程名称</th>
+                <th>学期</th>
+                <th>学分</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course[0] }}</td>
+                <td>{{ course[1] }}</td>
+                <td>{{ course[2] }}</td>
+                <td>{{ course[3] }}</td>
+                <td>
+                    <button class="delete-btn" onclick="deleteCourse('{{ course[0] }}')">删除</button>
+                    <button class="update-btn" onclick="showUpdateForm('{{ course[0] }}', '{{ course[1] }}', '{{ course[2] }}', {{ course[3] }})">修改</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 修改课程表单（初始隐藏） -->
+    <form id="updateCourseForm" class="update-form" style="display: none;">
+        <input type="hidden" id="updateCourseId" name="course_id">
+        <label for="updateCourseName">课程名称</label>
+        <input type="text" id="updateCourseName" name="course_name" placeholder="课程名称" required>
+        <label for="updateSemester">学期</label>
+        <input type="text" id="updateSemester" name="semester" placeholder="学期" required>
+        <label for="updateCredit">学分</label>
+        <input type="number" id="updateCredit" name="credit" placeholder="学分" required>
+        <button type="submit">保存修改</button>
+        <button type="button" onclick="hideUpdateForm()">取消</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('addCourseForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("{{ url_for('add_course') }}", {
+            method: 'POST',
+            body: formData
+        })
+           .then(response => response.json())
+           .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    location.reload();
+                }
+            });
+    });
+
+    function deleteCourse(courseId) {
+        if (confirm('确定要删除该课程吗？')) {
+            const formData = new FormData();
+            formData.append('course_id', courseId);
+            fetch("{{ url_for('delete_course') }}", {
+                method: 'POST',
+                body: formData
+            })
+               .then(response => response.json())
+               .then(data => {
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload();
+                    }
+                });
+        }
+    }
+
+    function showUpdateForm(courseId, courseName, semester, credit) {
+        document.getElementById('updateCourseId').value = courseId;
+        document.getElementById('updateCourseName').value = courseName;
+        document.getElementById('updateSemester').value = semester;
+        document.getElementById('updateCredit').value = credit;
+        document.getElementById('updateCourseForm').style.display = 'block';
+    }
+
+    function hideUpdateForm() {
+        document.getElementById('updateCourseForm').style.display = 'none';
+    }
+
+    document.getElementById('updateCourseForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("{{ url_for('update_course') }}", {
+            method: 'POST',
+            body: formData
+        })
+           .then(response => response.json())
+           .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    location.reload();
+                }
+            });
+    });
+</script>
+{% endblock %}

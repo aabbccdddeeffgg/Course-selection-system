@@ -1,0 +1,23 @@
+<!-- templates/admin/profile.html -->
+{% extends "admin/base.html" %}
+{% block title %}管理员个人信息{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/profile.css') }}">
+
+<div class="profile-container">
+    <h2>个人信息</h2>
+    <div class="info-card">
+        <div class="info-item">
+            <label>管理员ID：</label>
+            <span>{{ admin_info[1] }}</span>
+        </div>
+        <div class="info-item">
+            <label>姓名：</label>
+            <span>{{ admin_info[0] }}</span>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}

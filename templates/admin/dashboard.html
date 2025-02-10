@@ -1,11 +1,26 @@
-<!-- templates/admin/course.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员仪表盘</title>
+    <!-- 引入外部 CSS 文件 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student/profile.css') }}">
 </head>
 <body>
-    <h1>Welcome to the Admin Dashboard</h1>
+    <div class="admin-profile-container">
+        <h1 class="page-title">管理员个人信息</h1>
+        <div class="profile-card">
+            <div class="profile-header">
+<!--                <img src="{{ url_for('static', filename='admin_avatar.png') }}" alt="管理员头像" class="profile-avatar">-->
+                <h2 class="admin-name">{{ name }}</h2>
+            </div>
+            <div class="profile-details">
+                <p><span class="detail-label">管理员姓名:</span> <span class="detail-value">{{ name }}</span></p>
+                <p><span class="detail-label">管理员 ID:</span> <span class="detail-value">{{ admin_id }}</span></p>
+                <!-- 可以根据实际情况添加更多信息 -->
+            </div>
+        </div>
+    </div>
 </body>
 </html>

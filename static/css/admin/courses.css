@@ -1,0 +1,140 @@
+/* static/css/admin/courses.css */
+.el-card {
+    background-color: #ffffff;
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 1190px;
+}
+
+.add-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.add-form label {
+    width: 100%;
+    font-weight: bold;
+}
+
+.add-form input, .add-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+}
+
+.add-form button {
+    padding: 10px 20px;
+    background-color: #409EFF;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-form button:hover {
+    background-color: #66b1ff;
+}
+
+.course-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.course-table th, .course-table td {
+    border: 1px solid #ebeef5;
+    padding: 12px;
+    text-align: left;
+}
+
+.course-table th {
+    background-color: #f5f7fa;
+}
+
+.course-table tr:nth-child(even) {
+    background-color: #f9fafc;
+}
+
+.course-table tr:hover {
+    background-color: #ecf5ff;
+}
+
+.update-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.update-form label {
+    width: 100%;
+    font-weight: bold;
+}
+
+.update-form input, .update-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+}
+
+.update-form button {
+    padding: 10px 20px;
+    background-color: #409EFF;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.update-form button:hover {
+    background-color: #66b1ff;
+}
+
+/* 删除按钮样式 */
+.delete-btn {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #ff7875;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.delete-btn:active {
+    background-color: #d9363e;
+}
+
+/* 修改按钮样式 */
+.update-btn {
+    background-color: #ffa940;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.update-btn:hover {
+    background-color: #ffc069;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.update-btn:active {
+    background-color: #d9822b;
+}

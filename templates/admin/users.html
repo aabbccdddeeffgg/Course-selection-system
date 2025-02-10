@@ -1,0 +1,150 @@
+{% extends "admin/base.html" %}
+{% block title %}用户管理{% endblock %}
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/users.css') }}">
+<div class="el-card">
+    <h2>用户管理</h2>
+
+    <!-- 添加用户表单 -->
+    <form id="addUserForm" class="add-form">
+        <input type="text" name="user_id" placeholder="用户ID（例如 S1001）" required>
+        <input type="text" name="username" placeholder="姓名" value="{{ username }}" required autocomplete="new-password">
+        <input type="password" name="password" placeholder="密码" value="{{ password }}" required autocomplete="new-password">
+
+        <select name="role" required>
+            <option value="student">学生</option>
+            <option value="teacher">教师</option>
+        </select>
+        <!-- 学生和教师都需要院系号 -->
+        <input type="text" name="dept_id" placeholder="院系号" required>
+        <!-- 学生需要性别和年龄 -->
+        <input type="text" name="gender" placeholder="性别（男/女）">
+        <input type="text" name="age" placeholder="年龄">
+        <button type="submit">添加用户</button>
+    </form>
+
+    <!-- 用户列表（从数据库查询） -->
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th colspan="6">学生信息</th>
+                <th colspan="4">教师信息</th>
+            </tr>
+            <tr>
+                <th>学生ID</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>年龄</th>
+                <th>院系号</th>
+                <th>操作</th>
+                <th>教师ID</th>
+                <th>姓名</th>
+                <th>院系号</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set student_count = students|length %}
+            {% set teacher_count = teachers|length %}
+            {% set max_count = student_count if student_count > teacher_count else teacher_count %}
+            {% for i in range(max_count) %}
+            <tr>
+                {% if i < student_count %}
+                <td>{{ students[i][0] }}</td>
+                <td>{{ students[i][1] }}</td>
+                <td>{{ students[i][2] }}</td>
+                <td>{{ students[i][3] }}</td>
+                <td>{{ students[i][4] }}</td>
+                <!-- 学生操作列 -->
+                <td>
+                    <form class="delete-form" data-role="student">
+                        <input type="hidden" name="user_id" value="{{ students[i][0] }}">
+                        <button type="submit" class="delete-btn">🗑️ 删除</button>
+                    </form>
+                </td>
+                {% else %}
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                {% endif %}
+                {% if i < teacher_count %}
+                <td>{{ teachers[i][0] }}</td>
+                <td>{{ teachers[i][1] }}</td>
+                <td>{{ teachers[i][2] }}</td>
+                <!-- 教师操作列 -->
+                <td>
+                    <form class="delete-form" data-role="teacher">
+                        <input type="hidden" name="user_id" value="{{ teachers[i][0] }}">
+                        <button type="submit" class="delete-btn">🗑️ 删除</button>
+                    </form>
+                </td>
+                {% else %}
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<script>
+// 处理删除表单提交（带确认）
+document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // 获取用户信息用于提示
+        const userId = this.querySelector('[name="user_id"]').value;
+        const role = this.dataset.role === 'student' ? '学生' : '教师';
+
+        // 自定义确认对话框
+        if (!confirm(`确定要删除${role} ${userId} 吗？此操作不可撤销！`)) {
+            return;
+        }
+
+        const formData = new FormData(this);
+        formData.append('role', this.dataset.role);
+
+        fetch("{{ url_for('delete_user') }}", {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 添加删除动画效果
+                const row = this.closest('tr');
+                row.style.transition = 'all 0.3s';
+                row.style.opacity = '0';
+                setTimeout(() => row.remove(), 300);
+            }
+            alert(data.message);
+        });
+    });
+});
+</script>
+</div>
+
+<script>
+document.getElementById('addUserForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch("{{ url_for('add_user') }}", {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        if (data.success) location.reload();
+    });
+});
+</script>
+{% endblock %}

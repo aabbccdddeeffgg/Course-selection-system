@@ -1,19 +1,20 @@
-<!-- templates/student/base.html -->
+<!-- templates/admin/base.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Dashboard{% endblock %}</title>
+    <title>{% block title %}管理员端{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
 </head>
 <body>
     <div class="sidebar">
-        <h3>欢迎您，{{ session.get('name', '学生端') }}</h3> <!-- 动态显示学生姓名 -->
+        <h3>欢迎您，{{ session.get('name', '管理员') }}</h3>
         <ul>
-            <li><a href="{{ url_for('student_courses') }}">课程信息</a></li>
-            <li><a href="{{ url_for('student_enrollments') }}">选课信息</a></li>
-            <li><a href="{{ url_for('student_profile') }}">个人信息</a></li>
-            <li><a href="{{ url_for('student_change_password') }}">修改密码</a></li>
+            <li><a href="{{ url_for('admin_dashboard') }}">首页</a></li>
+            <li><a href="{{ url_for('admin_courses') }}">课程管理</a></li>
+            <li><a href="{{ url_for('admin_users') }}">用户管理</a></li>
+            <li><a href="{{ url_for('admin_classes') }}">班级管理</a></li>
+            <li><a href="{{ url_for('admin_change_password') }}">修改密码</a></li>
             <li><a href="{{ url_for('logout') }}">退出登录</a></li>
         </ul>
     </div>

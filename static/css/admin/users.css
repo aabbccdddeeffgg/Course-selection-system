@@ -1,0 +1,87 @@
+/* static/css/admin/user_management.css */
+.el-card {
+    background-color: #ffffff;
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 1190px;
+}
+
+.add-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.add-form label {
+    width: 100%;
+    font-weight: bold;
+}
+
+.add-form input, .add-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+}
+
+.add-form button {
+    padding: 10px 20px;
+    background-color: #409EFF;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-form button:hover {
+    background-color: #66b1ff;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.user-table th, .user-table td {
+    border: 1px solid #ebeef5;
+    padding: 12px;
+    text-align: left;
+}
+
+.user-table th {
+    background-color: #f5f7fa;
+}
+
+.user-table tr:nth-child(even) {
+    background-color: #f9fafc;
+}
+
+.user-table tr:hover {
+    background-color: #ecf5ff;
+}
+
+/* 删除按钮样式 */
+.delete-btn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.delete-btn:hover {
+  background-color: #ff7875;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.delete-btn:active {
+  background-color: #d9363e;
+}

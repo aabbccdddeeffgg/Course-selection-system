@@ -1,0 +1,114 @@
+{% extends "admin/base.html" %}
+{% block title %}班级管理{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/classes.css') }}">
+
+<div class="class-management">
+    <h2>班级管理</h2>
+    <div class="add-class-form">
+    <h3>添加班级</h3>
+    <form id="add-class-form">
+        <div class="form-group">
+            <label>课程号:</label>
+            <input type="text" id="add-course-id" required>
+        </div>
+        <div class="form-group">
+            <label>教师工号:</label>
+            <input type="text" id="add-teacher-id" required>
+        </div>
+        <div class="form-group">
+            <label>上课时间:</label>
+            <input type="text" id="add-class-time" required>
+        </div>
+        <button type="submit">添加班级</button>
+    </form>
+    </div>
+    <table class="class-table">
+        <thead>
+            <tr>
+                <th>课程号</th>
+                <th>课程名称</th>
+                <th>教师工号</th>
+                <th>教师姓名</th>
+                <th>上课时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for class in classes %}
+            <tr class="class-row" data-course="{{ class[0] }}" data-teacher="{{ class[2] }}">
+                <td>{{ class[0] }}</td>
+                <td>{{ class[1] }}</td>
+                <td>{{ class[2] }}</td>
+                <td>{{ class[3] }}</td>
+                <td>{{ class[4] }}</td>
+                <td>
+                    <button class="edit-class-btn">编辑班级</button>
+                    <button class="manage-students-btn">管理学生</button>
+                </td>
+            </tr>
+            <tr class="student-list" style="display: none;">
+                <td colspan="6">
+                    <div class="student-container">
+                        <h4>选课学生列表</h4>
+                        <table class="student-table">
+                            <thead>
+                                <tr>
+                                    <th>学号</th>
+                                    <th>姓名</th>
+                                    <th>成绩</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="students-body">
+                            </tbody>
+                        </table>
+                        <button class="add-student-btn">添加学生</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- 编辑班级模态框 -->
+<div id="editClassModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeEditModal">&times;</span>
+        <h3>编辑班级信息</h3>
+        <form id="editClassForm">
+            <input type="hidden" id="editCourseId">
+            <input type="hidden" id="editTeacherId">
+            <div class="form-group">
+                <label>授课教师:</label>
+                <select id="newTeacherId" required></select>
+            </div>
+            <div class="form-group">
+                <label>上课时间:</label>
+                <input type="text" id="newClassTime" required>
+            </div>
+            <button type="submit">保存修改</button>
+        </form>
+    </div>
+</div>
+
+<!-- 添加学生模态框 -->
+<div id="addStudentModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeAddStudentModal">&times;</span>
+        <h3>添加学生到班级</h3>
+        <form id="addStudentForm">
+            <input type="hidden" id="addCourseId">
+            <input type="hidden" id="addTeacherId">
+            <div class="form-group">
+                <label>学生学号:</label>
+                <input type="text" id="newStudentId" required>
+            </div>
+            <button type="submit">确认添加</button>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/admin/classes.js') }}"></script>
+{% endblock %}

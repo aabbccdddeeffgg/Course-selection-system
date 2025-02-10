@@ -854,13 +854,417 @@ def teacher_profile():
                            timetable=timetable)
 
 
+
+
+
+
 @app.route('/admin')
 def admin_dashboard():
     if session.get('role') == 'admin':
-        return render_template('admin/dashboard.html')
+        return redirect(url_for('admin_profile'))  # 重定向到个人信息页
     else:
         flash("您没有权限访问该页面！", "error")
         return redirect(url_for('login'))
+
+
+@app.route('/admin/profile', methods=['GET', 'POST'])
+def admin_profile():
+    if session.get('role') != 'admin':
+        flash("您没有权限访问该页面！", "error")
+        return redirect(url_for('login'))
+
+    admin_id = session.get('ID')  # 从 session 中获取管理员ID
+
+    # 获取管理员个人信息
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT name, admin_id FROM admin WHERE admin_id = %s", (admin_id,))
+    admin_info = cursor.fetchone()
+    cursor.close()
+
+    return render_template('admin/profile.html', admin_info=admin_info)
+
+
+
+# # 用户管理页面
+@app.route('/admin/users')
+def admin_users():
+    # 检查是否为管理员
+    if session.get('role') != 'admin':
+        flash("权限不足！", "error")
+        return redirect(url_for('login'))
+
+    try:
+        cursor = mysql.connection.cursor()
+        # 查询学生信息
+        cursor.execute("SELECT s.student_id, s.name, s.gender, s.age, s.dept_id FROM student s")
+        students = cursor.fetchall()
+        # 查询教师信息
+        cursor.execute("SELECT t.teacher_id, t.name, t.dept_id FROM teacher t")
+        teachers = cursor.fetchall()
+        cursor.close()
+        # 确保不传递默认值给添加用户表单的姓名和密码输入框
+        return render_template('admin/users.html', students=students, teachers=teachers, username='', password='')
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'查询失败：{str(e)}'})
+
+
+# 添加用户（学生/教师）
+@app.route('/admin/add_user', methods=['POST'])
+def add_user():
+    if session.get('role') != 'admin':
+        return jsonify({'success': False, 'message': '权限不足！'})
+
+    user_id = request.form.get('user_id')
+    username = request.form.get('username')
+    password = request.form.get('password')
+    role = request.form.get('role')  # 'student' 或 'teacher'
+
+    try:
+        cursor = mysql.connection.cursor()
+        # 加密密码
+        hashed_password = hash_password(password)
+        # 插入到 user 表
+        cursor.execute(
+            "INSERT INTO user (ID, username, password) VALUES (%s, %s, %s)",
+            (user_id, username, hashed_password)
+        )
+        # 根据角色插入到对应表（student 或 teacher）
+        if role == 'student':
+            # 检查性别、年龄和院系号是否提供
+            gender = request.form.get('gender')
+            age = request.form.get('age')
+            dept_id = request.form.get('dept_id')
+            if not gender or not age or not dept_id:
+                return jsonify({'success': False, 'message': '添加学生时，性别、年龄和院系号不能为空！'})
+            cursor.execute("INSERT INTO student (student_id, name, gender, age, dept_id) VALUES (%s, %s, %s, %s, %s)",
+                           (user_id, username, gender, age, dept_id))
+        elif role == 'teacher':
+            dept_id = request.form.get('dept_id')
+            if not dept_id:
+                return jsonify({'success': False, 'message': '添加教师时，院系号不能为空！'})
+            cursor.execute("INSERT INTO teacher (teacher_id, name, dept_id) VALUES (%s, %s, %s)",
+                           (user_id, username, dept_id))
+
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '用户添加成功！'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'添加失败：{str(e)}'})
+
+
+# 删除用户（学生/教师）
+@app.route('/admin/delete_user', methods=['POST'])
+def delete_user():
+    if session.get('role') != 'admin':
+        return jsonify({'success': False, 'message': '权限不足！'})
+
+    user_id = request.form.get('user_id')
+    role = request.form.get('role')  # 通过角色判断要删除哪个表
+
+    try:
+        cursor = mysql.connection.cursor()
+
+        # 先删除user表的记录
+        cursor.execute("DELETE FROM user WHERE ID = %s", (user_id,))
+
+        # 根据角色删除对应表
+        if role == 'student':
+            cursor.execute("DELETE FROM student WHERE student_id = %s", (user_id,))
+        elif role == 'teacher':
+            cursor.execute("DELETE FROM teacher WHERE teacher_id = %s", (user_id,))
+
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '用户删除成功！'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'删除失败：{str(e)}'})
+
+
+
+# 课程管理页面
+@app.route('/admin/courses')
+def admin_courses():
+    if session.get('role') != 'admin':
+        flash("权限不足！", "error")
+        return redirect(url_for('login'))
+
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM course")
+        courses = cursor.fetchall()
+        cursor.close()
+        return render_template('admin/courses.html', courses=courses)
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'查询失败：{str(e)}'})
+
+# 增加课程
+@app.route('/admin/add_course', methods=['POST'])
+def add_course():
+    if session.get('role') != 'admin':
+        return jsonify({'success': False, 'message': '权限不足！'})
+
+    course_id = request.form.get('course_id')
+    course_name = request.form.get('course_name')
+    semester = request.form.get('semester')
+    credit = request.form.get('credit')
+
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("INSERT INTO course (course_id, course_name, semester, credit) VALUES (%s, %s, %s, %s)",
+                       (course_id, course_name, semester, credit))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '课程添加成功！'})
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({'success': False, 'message': f'添加失败：{str(e)}'})
+
+# 删除课程
+@app.route('/admin/delete_course', methods=['POST'])
+def delete_course():
+    if session.get('role') != 'admin':
+        return jsonify({'success': False, 'message': '权限不足！'})
+
+    course_id = request.form.get('course_id')
+
+    try:
+        cursor = mysql.connection.cursor()
+        # 先删除课程选择表中的相关记录
+        cursor.execute("DELETE FROM course_selection WHERE course_id = %s", (course_id,))
+        # 再删除课程表中的记录
+        cursor.execute("DELETE FROM course WHERE course_id = %s", (course_id,))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '课程删除成功！'})
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({'success': False, 'message': f'删除失败：{str(e)}'})
+
+# 修改课程
+@app.route('/admin/update_course', methods=['POST'])
+def update_course():
+    if session.get('role') != 'admin':
+        return jsonify({'success': False, 'message': '权限不足！'})
+
+    course_id = request.form.get('course_id')
+    course_name = request.form.get('course_name')
+    semester = request.form.get('semester')
+    credit = request.form.get('credit')
+
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE course SET course_name = %s, semester = %s, credit = %s WHERE course_id = %s",
+                       (course_name, semester, credit, course_id))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '课程修改成功！'})
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({'success': False, 'message': f'修改失败：{str(e)}'})
+
+
+# 班级管理主页面
+@app.route('/admin/classes')
+def admin_classes():
+    if session.get('role') != 'admin':
+        flash("权限不足！", "error")
+        return redirect(url_for('login'))
+    cursor = mysql.connection.cursor()
+    cursor.execute("""
+        SELECT c.course_id, co.course_name, t.teacher_id, t.name, c.class_time 
+        FROM class c
+        JOIN course co ON c.course_id = co.course_id
+        JOIN teacher t ON c.teacher_id = t.teacher_id
+    """)
+    classes = cursor.fetchall()
+    cursor.close()
+    return render_template('admin/classes.html', classes=classes)
+
+
+@app.route('/admin/add_class', methods=['POST'])
+def add_class():
+    course_id = request.json.get('course_id')
+    teacher_id = request.json.get('teacher_id')
+    class_time = request.json.get('class_time')
+
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("""
+            INSERT INTO class (teacher_id, course_id, class_time)
+            VALUES (%s, %s, %s)
+        """, (teacher_id, course_id, class_time))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '班级添加成功'})
+    except Exception as e:
+        print('Error adding class:', e)
+        return jsonify({'success': False, 'message': str(e)})
+# 获取班级学生列表
+@app.route('/admin/class_students', methods=['POST'])
+def get_class_students():
+    course_id = request.form.get('course_id')
+    teacher_id = request.form.get('teacher_id')
+    print('Received Course ID:', course_id, 'Teacher ID:', teacher_id)
+    cursor = mysql.connection.cursor()
+    try:
+        # 修改后的 SQL 查询语句，直接从 course_selection 表中使用 teacher_id
+        cursor.execute("""
+            SELECT s.student_id, s.name, cs.grade 
+            FROM course_selection cs
+            JOIN student s ON cs.student_id = s.student_id
+            WHERE cs.course_id = %s AND cs.teacher_id = %s
+        """, (course_id, teacher_id))
+        students = cursor.fetchall()
+        print('Fetched students:', students)
+        cursor.close()
+        return jsonify({'students': students})
+    except Exception as e:
+        print('Error fetching students:', e)
+        return jsonify({'students': []})
+
+# 获取教授特定课程的教师列表
+@app.route('/admin/get_teachers_by_course', methods=['POST'])
+def get_teachers_by_course():
+    course_id = request.json.get('course_id')
+    cursor = mysql.connection.cursor()
+    try:
+        cursor.execute("""
+            SELECT t.teacher_id, t.name 
+            FROM teacher t
+            JOIN class c ON t.teacher_id = c.teacher_id
+            WHERE c.course_id = %s
+        """, (course_id,))
+        teachers = cursor.fetchall()
+        cursor.close()
+        return jsonify({'teachers': teachers})
+    except Exception as e:
+        print('Error fetching teachers:', e)
+        return jsonify({'teachers': []})
+# 修改班级信息
+@app.route('/admin/update_class', methods=['POST'])
+def update_class():
+    old_course_id = request.json.get('old_course_id')
+    old_teacher_id = request.json.get('old_teacher_id')
+    new_teacher_id = request.json.get('new_teacher_id')
+    new_class_time = request.json.get('new_class_time')
+
+    try:
+        cursor = mysql.connection.cursor()
+        # 检查新的组合是否已经存在
+        cursor.execute("""
+            SELECT * FROM class 
+            WHERE teacher_id = %s AND course_id = %s
+        """, (new_teacher_id, old_course_id))
+        if cursor.fetchone():
+            return jsonify({'success': False, 'message': '该班级信息已存在，无需重复添加'})
+
+        # 先删除旧记录
+        cursor.execute("DELETE FROM class WHERE course_id = %s AND teacher_id = %s",
+                       (old_course_id, old_teacher_id))
+        # 插入新记录
+        cursor.execute("INSERT INTO class (teacher_id, course_id, class_time) VALUES (%s, %s, %s)",
+                       (new_teacher_id, old_course_id, new_class_time))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '班级信息更新成功'})
+    except Exception as e:
+        print('Error updating class:', e)
+        return jsonify({'success': False, 'message': str(e)})
+# 管理学生成绩
+@app.route('/admin/update_grade', methods=['POST'])
+def update_grade():
+    student_id = request.json.get('student_id')
+    course_id = request.json.get('course_id')
+    new_grade = request.json.get('new_grade')
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("""
+            UPDATE course_selection 
+            SET grade = %s 
+            WHERE student_id = %s AND course_id = %s
+        """, (new_grade, student_id, course_id))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '成绩更新成功'})
+    except Exception as e:
+        print('Error updating grade:', e)
+        return jsonify({'success': False, 'message': str(e)})
+# 删除学生选课记录
+@app.route('/admin/delete_student', methods=['POST'])
+def delete_student():
+    student_id = request.json.get('student_id')
+    course_id = request.json.get('course_id')
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("""
+            DELETE FROM course_selection 
+            WHERE student_id = %s AND course_id = %s
+        """, (student_id, course_id))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '学生选课记录已删除'})
+    except Exception as e:
+        print('Error deleting student:', e)
+        return jsonify({'success': False, 'message': str(e)})
+# 添加学生到班级
+@app.route('/admin/add_student', methods=['POST'])
+def add_student():
+    student_id = request.json.get('student_id')
+    course_id = request.json.get('course_id')
+    # 这里不再使用 teacher_id，因为表中可能不存在该字段
+
+    try:
+        cursor = mysql.connection.cursor()
+        # 检查是否已存在
+        cursor.execute("""
+            SELECT * FROM course_selection 
+            WHERE student_id = %s AND course_id = %s
+        """, (student_id, course_id))
+        if cursor.fetchone():
+            return jsonify({'success': False, 'message': '该学生已选课'})
+
+        # 修改插入语句，只插入 student_id 和 course_id
+        cursor.execute("""
+            INSERT INTO course_selection (student_id, course_id)
+            VALUES (%s, %s)
+        """, (student_id, course_id))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '学生添加成功'})
+    except Exception as e:
+        print('Error adding student:', e)
+        return jsonify({'success': False, 'message': str(e)})
+
+
+@app.route('/admin/change_password', methods=['GET', 'POST'])
+def admin_change_password():
+    # 验证用户角色是否为管理员
+    if session.get('role') != 'admin':
+        flash("您没有权限访问该页面！", "error")
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        # 从 session 中获取管理员 ID
+        admin_id = session.get('ID')
+        old_password = request.form.get('old_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        # 验证新密码和确认新密码是否一致
+        if new_password != confirm_password:
+            return jsonify({'success': False, 'message': '新密码和确认新密码不一致，请重新输入！'})
+        # 查询数据库验证旧密码是否正确
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT password FROM user WHERE ID = %s", (admin_id,))
+        user = cursor.fetchone()
+        if not user or not verify_password(user[0], old_password):
+            cursor.close()
+            return jsonify({'success': False, 'message': '旧密码不正确，请检查后重试！'})
+        # 更新密码（加密新密码）
+        hashed_new_password = hash_password(new_password)
+        cursor.execute("UPDATE user SET password = %s WHERE ID = %s", (hashed_new_password, admin_id))
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': True, 'message': '密码修改成功！'})
+    return render_template('admin/change_password.html')
 
 
 @app.route('/logout')
